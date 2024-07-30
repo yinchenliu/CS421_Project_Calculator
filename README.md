@@ -126,6 +126,16 @@ calc xs = do display xs
                 do  beep
                     calc xs
 ```
+The _process_ function handles different types of user inputs, determining the appropriate action based on the character entered. It processes commands for quitting, deleting, evaluating, clearing, and handling general input.
+```
+process :: Char -> String -> IO ()
+process c xs 
+  | elem c "qQ\ESC" = quit
+  | elem c "dD\BS\DEL" = delete xs
+  | elem c "=\n" = eval1 xs  -- when "=" or Enter is pressed, evaluate the expression
+  | elem c "cC" = clear
+  | otherwise = press c xs
+```
 
 ### Testing:
 
