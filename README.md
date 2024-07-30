@@ -14,6 +14,7 @@ The goal of this project was to build a calculator for regular arithmetic expres
 By building the calculator, I gained a deeper understanding of the mechanics and intricacies involved in parser and programming language in general.
 ## Implementation 
 The major tasks of our implementation included:
+
 1.	Defining the Grammar: Designing a grammar for arithmetic expressions that ensures correct precedence and left-associativity.
 2.	Implementing the Parser: Building a parser library in Haskell, including the necessary instances for Functor, Applicative, Monad, and Alternative.
 3.	Evaluating Expressions: Creating functions to evaluate arithmetic expressions based on the parsed structure.
@@ -21,15 +22,19 @@ The major tasks of our implementation included:
 
 ### Grammar 
 The grammar used for the arithmetic expressions is designed to handle standard. Initially, the grammar was defined as follows: 
+```
 •	expr ::= expr + term | expr - term | term 
 •	term ::= term * factor | term / factor | factor 
 •	factor ::= (expr) | float
+```
 But to implement the LL parser (top-down parser), we needed to eliminate the left recursion in the expr and term production rules. The modified grammar is:
+```
 •	expr :: = term expr’ 
 •	expr’ :: = + term expr’ | - term expr’ | e 
 •	term :: = factor term’ 
 •	term’ :: = * factor term’ | / factor term’ | e 
 •	factor :: = (expr) | float
+```
 ### Parser
 The core of the project is the Parser.hs, where the data type Parser is defined. I implemented instances for Functor, Applicative, Monad, and Alternative for the Parser type. These classes allow us to compose parsers in a modular and expressive way. Additionally, helper functions were defined to parse floats, int, char, string and other basic elements.
 ### Evaluation
@@ -56,19 +61,19 @@ All unit tests passed successfully, validating that our parser functions correct
 Below are some key functions and data structures from the project, along with explanations and comments.
 ### Parser:
 
-Parser dataype
+_Parser_ dataype
 ```
 Parser a = Parser (String-> [(a,String)]
 ```
 
-The sat function is designed to create a single chafacter if it satisfies a given predicate.
+The _sat_ function is designed to create a single chafacter if it satisfies a given predicate.
 ```
 sat :: (Char->Bool)->Parser Char
 sat pred = do x<- item
               if pred x then return x else empty
 ```
 
-The float function is defined to parse floating-point numbers from the input. It handles both positive and negative floating-point numbers by utilizing multiple functions.
+The _float_ function is defined to parse floating-point numbers from the input. It handles both positive and negative floating-point numbers by utilizing multiple functions.
 ```
 float :: Parser Float
 float = do 
@@ -81,14 +86,26 @@ float = do
 
 ### Evaluation: 
 
-The expr function parses and evaluates arithmetic expressions, handling addition and subtraction.
+The _expr_ function parses and evaluates arithmetic expressions, handling addition and subtraction.
 ```
 expr :: Parser Float 
 expr = do t <- term 
    expr' t
 ```
 
-The eval function evaluates a given string as an arithmetic expression and returns the result as a Float.
+The _expr'_ function continues parsing the expression for additional terms that are added or subtracted from the accumulated value. It uses the <|> operator to try parsing either a + or - followed by another term. If neither is found, it returns the accumulated value.
+```
+expr' :: Float -> Parser Float
+expr' acc = (do
+  symbol "+"
+  t <- term
+  expr' (acc + t)) <|> (do
+  symbol "-"
+  t <- term
+  expr' (acc - t)) <|> pure acc
+```
+
+The _eval_ function evaluates a given string as an arithmetic expression and returns the result as a Float.
 ```
 eval:: String-> Float
 eval xs = case (run expr xs) of
@@ -97,8 +114,8 @@ eval xs = case (run expr xs) of
         []->error "Invalid Input"
         _->error "Invalid Input"
 ```
-
-The calc function manages the main loop of the command-line calculator, handling user input and updating the display.
+### Main:
+The _calc_ function manages the main loop of the command-line calculator, handling user input and updating the display.
 ```
 calc:: String -> IO()
 calc xs = do display xs
