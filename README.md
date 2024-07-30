@@ -146,5 +146,6 @@ testExprComplexFloat3 = TestCase (assertEqual "for (eval \"2*3/4-3.5*(2.2-1.4)\"
 ```
 
 
-
+## Conclusion
+This project successfully demonstrates the implementation of a parser combinator library and an arithmetic expression evaluator in Haskell. Through comprehensive testing and clear documentation, I have ensured that our parser and evaluator handle various expressions correctly and efficiently.
 
