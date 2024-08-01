@@ -1,6 +1,7 @@
 # Calculator
 ## Overview
 The goal of this project was to build a calculator for regular arithmetic expressions entirely from scratch, without using any existing libraries. This involved implementing a parser and evaluator library in Haskell and creating a terminal-based user interface. The project covered several topics learnt from CS421 and other programming language principals, including:
+
 •	Functional Programming 
 
 •	Grammar 
